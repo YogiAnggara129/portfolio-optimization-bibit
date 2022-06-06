@@ -3,3 +3,5 @@ data/user_pasardana.json
 geckodriver.log
 .RHistory
 data/nav
+data/nav_bibit.csv
+data/nav_bibit_fund_return.csv
