@@ -1,22 +1,43 @@
-source("scripts/multi_objective.R")
-source("scripts/mv.R")
+source("scripts/portfolio_optimization.R")
 
-df <- read.csv("data/nav_bibit_fund_return.csv")
-
+df_bibit <- read.csv("data/nav_bibit_fund_return_train.csv")
+df_ihsg <- read.csv("data/ihsg_close_return.csv")
+r_br <- 0.035 / 48
 # Set DateTime as index / row names
-row.names(df) <- df$DateTime
-df$DateTime <- NULL
+row.names(df_bibit) <- df_bibit$DateTime
+df_bibit$DateTime <- NULL
+row.names(df_ihsg) <- df_ihsg$Date
+df_ihsg$Date <- NULL
 
-# Optimal portfolio if gamma = 30
-s <- cov(df)
-mu <- colMeans(df)
-multi_objective(s = s, mu = mu, gamma = 30)
+# Choose fund that have positive expected return
+mu_bibit <- colMeans(df_bibit)
+df_bibit <- df_bibit[which(mu_bibit > 0)]
 
-# Optimal portfolio for top three best mu if gamma = 30
-mu_best_3 <- sort(mu, decreasing = TRUE)[1:3]
-mu_best_3
-df2 <- df[names(mu_best_3)]
-head(df2)
-s2 <- cov(df2)
-mu2 <- colMeans(df2)
-multi_objective(df2, gamma = 30)
+# Expected return and risk
+## Bibit
+mu_bibit <- colMeans(df_bibit)
+s_bibit <- cov(df_bibit)
+## IHSG
+mu_ihsg <- colMeans(df_ihsg)
+s_ihsg <- cov(df_ihsg)
+
+#####################################
+# Multi objective
+
+## Optimal portfolio for gamma = 30
+temp <- multi_objective(df_bibit, gamma = 2)
+which(temp == min(temp))
+
+## Optimal portfolio for gamma = 70 with backward algorithm
+backward(df_bibit, function(x) {
+    multi_objective(x, gamma = 70)
+})
+
+#####################################
+
+#####################################
+# Single index model
+bi7drr_year <- 0.035
+bi7drr_weekly <- bi7drr_year / 48
+single_index(df_bibit, df_ihsg$Close, r_br = bi7drr_weekly)
+#####################################
