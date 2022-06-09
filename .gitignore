@@ -8,3 +8,6 @@ data/nav_bibit_fund_return.csv
 data/ihsg_close_return.csv
 data/nav_bibit_fund_return_train.csv
 data/nav_bibit_fund_return_test.csv
+data/nav_bibit_fund.csv
+data/nav_bibit_fund_train.csv
+data/nav_bibit_fund_test.csv
